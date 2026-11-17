@@ -1,0 +1,40 @@
+#ifndef STRUCTURES_H
+#define STRUCTURES_H
+#define MAX_USERS 100
+#define MAX_PRODUCTS 100
+#define MAX_ORDERS 500
+#define MAX_NAME 50
+#define MAX_TEXT 30
+
+
+typedef struct
+{
+    int userID;
+    char name[MAX_NAME];
+    char telephone[20];
+    char password[20];
+    double balance;
+    int active;
+} User;
+
+
+typedef struct
+{
+    int productID;
+    char name[MAX_NAME];
+    double basePrice;
+    int available;
+} Product;
+
+
+typedef struct
+{
+    int orderID, userID, productID;
+    char productName[MAX_NAME], crust[MAX_TEXT];
+    int size;
+    char topping[MAX_TEXT];
+    int quantity;
+    double unitPrice;
+    int status;
+} Order;
+#endif
