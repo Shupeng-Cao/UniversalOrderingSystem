@@ -26,7 +26,12 @@ static void defaultProducts(void)
         products[2].basePrice = 9.00;
         products[2].available = 1;
 
-        productCount = 3;
+        products[3].productID = 4;
+        strcpy(products[3].name, "Texas_BBQ_Meat_Pizza");
+        products[3].basePrice = 6.00;
+        products[3].available = 1;
+        
+        productCount = 4;
         saveProducts();
     }
 }
