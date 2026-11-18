@@ -10,6 +10,7 @@
 typedef struct
 {
     int userID;
+    char username[20];
     char name[MAX_NAME];
     char telephone[20];
     char password[20];
