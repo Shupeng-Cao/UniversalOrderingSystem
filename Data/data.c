@@ -34,20 +34,37 @@ static void defaultProducts(void)
 void loadData(void)
 {
     FILE *fp;
+    char line[256];
 
     fp = fopen("users.txt", "r");
     if (fp != NULL)
     {
-        while (userCount < MAX_USERS &&
-               fscanf(fp, "%d %49s %19s %19s %lf %d",
-                      &users[userCount].userID,
-                      users[userCount].name,
-                      users[userCount].telephone,
-                      users[userCount].password,
-                      &users[userCount].balance,
-                      &users[userCount].active) == 6)
+        while (userCount < MAX_USERS && fgets(line, sizeof(line), fp) != NULL)
         {
-            userCount++;
+            User u;
+            int fields;
+
+            /* Current format: ID|username|name|telephone|password|balance|active */
+            fields = sscanf(line, "%d|%19[^|]|%49[^|]|%19[^|]|%19[^|]|%lf|%d",
+                            &u.userID, u.username, u.name, u.telephone,
+                            u.password, &u.balance, &u.active);
+
+            if (fields == 7)
+            {
+                users[userCount++] = u;
+            }
+            else
+            {
+                /* Compatibility with files created by the previous version. */
+                fields = sscanf(line, "%d %49s %19s %19s %lf %d",
+                                &u.userID, u.name, u.telephone, u.password,
+                                &u.balance, &u.active);
+                if (fields == 6)
+                {
+                    snprintf(u.username, sizeof(u.username), "user%d", u.userID);
+                    users[userCount++] = u;
+                }
+            }
         }
         fclose(fp);
     }
@@ -61,9 +78,7 @@ void loadData(void)
                       products[productCount].name,
                       &products[productCount].basePrice,
                       &products[productCount].available) == 4)
-        {
             productCount++;
-        }
         fclose(fp);
     }
 
@@ -82,9 +97,7 @@ void loadData(void)
                       &orders[orderCount].quantity,
                       &orders[orderCount].unitPrice,
                       &orders[orderCount].status) == 10)
-        {
             orderCount++;
-        }
         fclose(fp);
     }
 
@@ -98,17 +111,17 @@ void saveUsers(void)
 
     fp = fopen("users.txt", "w");
     if (fp == NULL)
+    {
+        puts("Error: could not save users.txt.");
         return;
+    }
 
     for (i = 0; i < userCount; i++)
     {
-        fprintf(fp, "%d %s %s %s %.2f %d\n",
-                users[i].userID,
-                users[i].name,
-                users[i].telephone,
-                users[i].password,
-                users[i].balance,
-                users[i].active);
+        fprintf(fp, "%d|%s|%s|%s|%s|%.2f|%d\n",
+                users[i].userID, users[i].username, users[i].name,
+                users[i].telephone, users[i].password,
+                users[i].balance, users[i].active);
     }
     fclose(fp);
 }
